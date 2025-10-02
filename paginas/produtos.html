@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loja Swift</title>
+<style>
+* { box-sizing: border-box; margin:0; padding:0; font-family: Arial, sans-serif;}
+body { background: #f5f5f5; color: #333; }
+
+/* Header */
+header { background: #f15a24; color:#fff; padding: 10px 20px; }
+header .top-bar { display:flex; justify-content:space-between; align-items:center; font-size:14px; }
+header .top-bar button { background:#fff; color:#f15a24; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;}
+header .search-cart { display:flex; align-items:center; margin-top:10px; }
+header input[type="text"] { flex:1; padding:5px 10px; border-radius:5px; border:none; margin-right:10px; }
+header .cart { display:flex; align-items:center; gap:5px; cursor:pointer; font-weight:bold; }
+
+/* Category icons */
+.nav-categories { background:#f2f2f2; display:flex; flex-wrap:wrap; gap:15px; padding:10px 20px; border-bottom:1px solid #ddd; justify-content:center; align-items:center; }
+.nav-categories .cat-item { display:flex; flex-direction:row; align-items:center; gap:8px; font-size:13px; cursor:pointer; background:transparent; padding:6px 10px; border-radius:6px; }
+.nav-categories .cat-item img { width:40px; height:40px; margin:0; display:block; }
+.nav-categories .cat-item span { display:inline-block; vertical-align:middle; }
+.nav-categories .cat-item:hover { background:#fff; }
+/* Separador vertical entre categorias (exceto primeiro) */
+.nav-categories .cat-item:not(:first-child) { border-left:1px solid #ddd; padding-left:16px; margin-left:8px; }
+
+/* Em telas pequenas, remover o separador e reduzir gaps para evitar overflow */
+@media (max-width:600px) {
+        .nav-categories { gap:8px; padding:8px 10px; justify-content:center; }
+    .nav-categories .cat-item { gap:6px; padding:6px 8px; }
+    .nav-categories .cat-item:not(:first-child) { border-left:none; padding-left:8px; }
+}
+
+/* Layout */
+.container { display:flex; max-width:1200px; margin:20px auto; gap:20px; align-items:flex-start; }
+.sidebar { width:220px; background:#fff; padding:15px; border-radius:8px; align-self:flex-start; }
+.sidebar h3 { margin-bottom:10px; font-size:16px; }
+.sidebar button { display:block; width:100%; padding:5px 10px; margin-bottom:5px; border:1px solid #ccc; border-radius:5px; background:#f9f9f9; cursor:pointer; text-align:left; font-size:14px; }
+.sidebar button.active { border-color:#f15a24; background:#ffe6db; }
+.sidebar button:hover { background:#fff; transform:translateX(4px); }
+
+/* Products */
+.products { flex:1; display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:20px; }
+.product-card { background:#fff; padding:15px; border-radius:8px; text-align:center; position:relative; }
+.product-card img { max-width:100%; border-radius:8px; margin-bottom:8px; display:block; }
+.product-card h4 { font-size:16px; margin-top:12px; margin-bottom:5px; }
+.product-card .price { font-weight:bold; margin-bottom:5px; }
+.product-card .pack { font-size:12px; color:#555; margin-bottom:10px; }
+.product-card .quantity { display:flex; justify-content:center; align-items:center; gap:5px; margin-bottom:10px; }
+.product-card .quantity span { background:#eee; padding:2px 6px; border-radius:12px; font-size:12px; }
+.product-card .quantity button { padding:2px 8px; border:1px solid #ccc; background:#f5f5f5; cursor:pointer; border-radius:4px; }
+.product-card .add-btn { background:#f15a24; color:#fff; border:none; padding:8px 12px; border-radius:5px; cursor:pointer; width:100%; }
+
+/* Badge */
+.badge { position:absolute; background:#f15a24; color:#fff; padding:4px 8px; font-size:12px; border-radius:8px; top:10px; left:10px; font-weight:bold; z-index:5; }
+.badge-container { position:relative; }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="top-bar">
+        <div>São Paulo - Capital - CEP 09751-250 | Preços válidos somente para essa Região.</div>
+        <button>ALTERAR</button>
+    </div>
+    <div class="search-cart">
+        <input type="text" placeholder="Procure por proteína, cortes, etc...">
+        <div class="cart">CARRINHO</div>
+    </div>
+</header>
+
+<!-- Icons de categorias -->
+<div class="nav-categories">
+    <div class="cat-item"><img src="../assets/categorias/pronto_para_comer.png" alt="Prontos para comer"><span>PRONTOS PARA COMER</span></div>
+    <div class="cat-item"><img src="../assets/categorias/carnes.png" alt="Carnes / Bovinos"><span>BOVINOS</span></div>
+    <div class="cat-item"><img src="../assets/categorias/aves.png" alt="Aves"><span>AVES</span></div>
+    <div class="cat-item"><img src="../assets/categorias/pescado.jpg" alt="Pescados"><span>PESCADOS</span></div>
+    <div class="cat-item"><img src="../assets/categorias/suino.png" alt="Suínos"><span>SUÍNOS</span></div>
+    <div class="cat-item"><img src="../assets/categorias/linguiça.png" alt="Linguiças"><span>LINGUIÇAS</span></div>
+    <div class="cat-item"><img src="../assets/categorias/churrasco.png" alt="Churrasco"><span>CHURRASCO</span></div>
+</div>
+
+<div class="container">
+    <aside class="sidebar">
+        <h3>Ordenar</h3>
+        <button>Maior Preço</button>
+        <button>Menor Preço</button>
+        <button class="active">Mais Vendido</button>
+        <button>Maior Desconto</button>
+        <button>A-Z</button>
+        <button>Z-A</button>
+
+        <h3>Categorias</h3>
+        <button>Bolsas Térmicas e Sacolas (3)</button>
+        <button>Caldo Culinários (5)</button>
+        <button>Cerveja (10)</button>
+        <button>Defumação (2) </button>
+    </aside>
+
+    <section class="products">
+        <div class="product-card">
+            <div class="badge-container">
+                <div class="badge">2ª UN POR R$ 10,90 CADA</div>
+                <img src="../assets/produtos/farofa.png" alt="Farofa Tradicional Swift 400g">
+            </div>
+            <h4>Farofa Tradicional Swift 400g</h4>
+            <div class="price">R$ 11,90</div>
+            <div class="pack">Embalagem de 400g</div>
+            <div class="quantity">
+                <button type="button" class="qty-btn dec" aria-label="Diminuir">-</button>
+                <span class="qty-value">01</span>
+                <button type="button" class="qty-btn inc" aria-label="Aumentar">+</button>
+            </div>
+            <button class="add-btn">ADICIONAR</button>
+        </div>
+
+        <div class="product-card">
+            <img src="../assets/produtos/azeite.jpeg" alt="Azeite Extra Virgem Gallo 500ml">
+            <h4>Azeite Extra Virgem Gallo 500ml</h4>
+            <div class="price">R$ 39,90</div>
+            <div class="pack">Embalagem de 500ml</div>
+            <div class="quantity">
+                <button type="button" class="qty-btn dec" aria-label="Diminuir">-</button>
+                <span class="qty-value">01</span>
+                <button type="button" class="qty-btn inc" aria-label="Aumentar">+</button>
+            </div>
+            <button class="add-btn">ADICIONAR</button>
+        </div>
+
+        <div class="product-card">
+            <img src="../assets/produtos/cebola_alho_e_salsa.png" alt="Cebola Alho e Salsa Swift 85g">
+            <h4>Cebola Alho e Salsa Swift 85g</h4>
+            <div class="price">R$ 11,00</div>
+            <div class="pack">Embalagem de 85g</div>
+            <div class="quantity">
+                <button type="button" class="qty-btn dec" aria-label="Diminuir">-</button>
+                <span class="qty-value">01</span>
+                <button type="button" class="qty-btn inc" aria-label="Aumentar">+</button>
+            </div>
+            <button class="add-btn">ADICIONAR</button>
+        </div>
+        
+        <div class="product-card">
+            <img src="../assets/produtos/carne_moida.png" alt="Carne Moída Swift 1kg">
+            <h4>Carne Moída Swift 1kg</h4>
+            <div class="price">R$ 24,90</div>
+            <div class="pack">Pacote 1kg</div>
+            <div class="quantity">
+                <button type="button" class="qty-btn dec" aria-label="Diminuir">-</button>
+                <span class="qty-value">01</span>
+                <button type="button" class="qty-btn inc" aria-label="Aumentar">+</button>
+            </div>
+            <button class="add-btn">ADICIONAR</button>
+        </div>
+
+        <div class="product-card">
+            <img src="../assets/produtos/coxa.png" alt="Coxa de Frango Swift 1kg">
+            <h4>Coxa de Frango Swift 1kg</h4>
+            <div class="price">R$ 18,90</div>
+            <div class="pack">Pacote 1kg</div>
+            <div class="quantity">
+                <button type="button" class="qty-btn dec" aria-label="Diminuir">-</button>
+                <span class="qty-value">01</span>
+                <button type="button" class="qty-btn inc" aria-label="Aumentar">+</button>
+            </div>
+            <button class="add-btn">ADICIONAR</button>
+        </div>
+
+        <div class="product-card">
+            <img src="../assets/produtos/patinho.png" alt="Patinho Swift 1kg">
+            <h4>Patinho Swift 1kg</h4>
+            <div class="price">R$ 32,90</div>
+            <div class="pack">Pacote 1kg</div>
+            <div class="quantity">
+                <button type="button" class="qty-btn dec" aria-label="Diminuir">-</button>
+                <span class="qty-value">01</span>
+                <button type="button" class="qty-btn inc" aria-label="Aumentar">+</button>
+            </div>
+            <button class="add-btn">ADICIONAR</button>
+        </div>
+
+        <div class="product-card">
+            <img src="../assets/produtos/caldo de abobora.png" alt="Caldo de Abóbora Swift 500ml">
+            <h4>Caldo de Abóbora Swift 500ml</h4>
+            <div class="price">R$ 7,90</div>
+            <div class="pack">Garrafa 500ml</div>
+            <div class="quantity">
+                <button type="button" class="qty-btn dec" aria-label="Diminuir">-</button>
+                <span class="qty-value">01</span>
+                <button type="button" class="qty-btn inc" aria-label="Aumentar">+</button>
+            </div>
+            <button class="add-btn">ADICIONAR</button>
+        </div>
+        
+        <div class="product-card">
+            <img src="../assets/produtos/file_de_sassami.png" alt="File de Sassami Swift 500g">
+            <h4>Filé de Sassami Swift 500g</h4>
+            <div class="price">R$ 19,90</div>
+            <div class="pack">Pacote 500g</div>
+            <div class="quantity">
+                <button type="button" class="qty-btn dec" aria-label="Diminuir">-</button>
+                <span class="qty-value">01</span>
+                <button type="button" class="qty-btn inc" aria-label="Aumentar">+</button>
+            </div>
+            <button class="add-btn">ADICIONAR</button>
+        </div>
+
+        <div class="product-card">
+            <img src="../assets/produtos/carvão_egetal.png" alt="Carvão Vegetal 3kg">
+            <h4>Carvão Vegetal 3kg</h4>
+            <div class="price">R$ 14,90</div>
+            <div class="pack">Saco 3kg</div>
+            <div class="quantity">
+                <button type="button" class="qty-btn dec" aria-label="Diminuir">-</button>
+                <span class="qty-value">01</span>
+                <button type="button" class="qty-btn inc" aria-label="Aumentar">+</button>
+            </div>
+            <button class="add-btn">ADICIONAR</button>
+        </div>
+
+        <div class="product-card">
+            <img src="../assets/produtos/molho_de_pimenta_cremoso.png" alt="Molho de Pimenta Cremoso 200ml">
+            <h4>Molho de Pimenta Cremoso 200ml</h4>
+            <div class="price">R$ 6,90</div>
+            <div class="pack">Garrafa 200ml</div>
+            <div class="quantity">
+                <button type="button" class="qty-btn dec" aria-label="Diminuir">-</button>
+                <span class="qty-value">01</span>
+                <button type="button" class="qty-btn inc" aria-label="Aumentar">+</button>
+            </div>
+            <button class="add-btn">ADICIONAR</button>
+        </div>
+
+        <div class="product-card">
+            <img src="../assets/produtos/panetone.png" alt="Panetone Swift 400g">
+            <h4>Panetone Swift 400g</h4>
+            <div class="price">R$ 29,90</div>
+            <div class="pack">Embalagem 400g</div>
+            <div class="quantity">
+                <button type="button" class="qty-btn dec" aria-label="Diminuir">-</button>
+                <span class="qty-value">01</span>
+                <button type="button" class="qty-btn inc" aria-label="Aumentar">+</button>
+            </div>
+            <button class="add-btn">ADICIONAR</button>
+        </div>
+
+        <div class="product-card">
+            <img src="../assets/produtos/morango_congelado.png" alt="Morango Congelado 300g">
+            <h4>Morango Congelado 300g</h4>
+            <div class="price">R$ 12,90</div>
+            <div class="pack">Pacote 300g</div>
+            <div class="quantity">
+                <button type="button" class="qty-btn dec" aria-label="Diminuir">-</button>
+                <span class="qty-value">01</span>
+                <button type="button" class="qty-btn inc" aria-label="Aumentar">+</button>
+            </div>
+            <button class="add-btn">ADICIONAR</button>
+        </div>
+    </section>
+</div>
+
+</body>
+<script>
+// Increment / decrement das quantidades (mínimo 1)
+document.addEventListener('DOMContentLoaded', function () {
+    function parseQty(text) {
+        // remove leading zeros and parse int
+        var n = parseInt(text, 10);
+        return isNaN(n) ? 1 : Math.max(1, n);
+    }
+
+    document.querySelectorAll('.product-card').forEach(function(card) {
+        var dec = card.querySelector('.qty-btn.dec');
+        var inc = card.querySelector('.qty-btn.inc');
+        var valEl = card.querySelector('.qty-value');
+
+        if (!dec || !inc || !valEl) return;
+
+        dec.addEventListener('click', function() {
+            var current = parseQty(valEl.textContent.trim());
+            var next = Math.max(1, current - 1);
+            valEl.textContent = String(next).padStart(2, '0');
+        });
+
+        inc.addEventListener('click', function() {
+            var current = parseQty(valEl.textContent.trim());
+            var next = current + 1;
+            valEl.textContent = String(next).padStart(2, '0');
+        });
+    });
+
+        // Toggle active state for 'Ordenar' buttons
+        var ordenarSection = document.querySelector('.sidebar');
+        if (ordenarSection) {
+            var ordenarButtons = Array.from(ordenarSection.querySelectorAll('h3 + button, h3 + button ~ button'));
+            ordenarButtons.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    ordenarButtons.forEach(function(b){ b.classList.remove('active'); });
+                    btn.classList.add('active');
+                });
+            });
+        }
+});
+</script>
+</html>
