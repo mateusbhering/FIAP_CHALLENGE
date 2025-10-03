@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento - Loja Swift</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        header {
+            background: #f15a24;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 24px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+
+        .section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            margin-bottom: 20px;
+            font-size: 20px;
+            color: #f15a24;
+        }
+
+        .products-selected,
+        .leve-tambem {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .products-selected .product,
+        .leve-tambem .product {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .products-selected .product img,
+        .leve-tambem .product img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+
+        .summary {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .summary .total {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f2f2f2;
+            font-size: 14px;
+            color: #555;
+            margin-top: 20px;
+        }
+
+        .add-btn {
+            background-color: #f15a24;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-btn:hover {
+            background-color: #d94e1f;
+        }
+
+        .container .section {
+            margin-bottom: 20px;
+        }
+
+        #paymentForm {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        #paymentForm label {
+            font-size: 14px;
+            color: #555;
+        }
+
+        #paymentForm input[type="text"],
+        #paymentForm select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        #paymentForm button {
+            background-color: #f15a24;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        #paymentForm button:hover {
+            background-color: #d94e1f;
+        }
+
+        #paymentDetails {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        #deliveryForm {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        #deliveryForm label {
+            font-size: 14px;
+            color: #555;
+        }
+
+        #deliveryForm input[type="text"],
+        #deliveryForm select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        #deliveryForm button {
+            background-color: #f15a24;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        #deliveryForm button:hover {
+            background-color: #d94e1f;
+        }
+
+        .section.summary {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+        }
+
+        .section.summary button {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f15a24;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 14px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .section.summary button:hover {
+            background-color: #d94e1f;
+        }
+
+        .finalize-button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .payment-method button,
+        .delivery-method button {
+            padding: 10px 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #fcede7;
+            color: black;
+            transition: background-color 0.3s;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+            <img src="../assets/logo_swift.png" alt="Swift Logo" style="height: 100px; width: 250;">
+            <button onclick="window.location.href='produtos.html'" style="background-color: #f15a24; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 16px;">Voltar</button>
+        </div>
+    </header>
+    <div class="container">
+        <div class="products">
+            <div class="section products-selected">
+                <h2>Meus Produtos</h2>
+            </div>
+            <div class="section leve-tambem">
+                <h2>Aproveite para levar também!</h2>
+                <div class="product">
+                    <img src="../assets/produtos/liguiça-toscana.webp" alt="Linguiça Toscana">
+                    <span>Linguiça Toscana</span>
+                    <span>R$ 25,00</span>
+                    <button class="add-btn" onclick="addToCart('Linguiça Toscana', 25, '../assets/produtos/liguiça-toscana.webp')">+</button>
+                </div>
+                <div class="product">
+                    <img src="../assets/produtos/ostrinhas de sobrecoxa.jpeg" alt="Ostrinhas">
+                    <span>Ostrinhas</span>
+                    <span>R$ 30,00</span>
+                    <button class="add-btn" onclick="addToCart('Ostrinhas', 30, '../assets/produtos/ostrinhas de sobrecoxa.jpeg')">+</button>
+                </div>
+            </div>
+        </div>
+        <div class="details">
+            <div class="section payment-method">
+                <h2>Forma de Pagamento</h2>
+                <button onclick="selectPaymentMethod('cartao')">Cartão de Crédito</button>
+                <button onclick="selectPaymentMethod('boleto')">Boleto Bancário</button>
+                <button onclick="selectPaymentMethod('pix')">PIX</button>
+                <form id="paymentForm" style="display: none;">
+                    <div id="cartao-details" style="display: none;">
+                        <label for="card-number">Número do Cartão:</label>
+                        <input type="text" id="card-number" name="card-number" placeholder="Digite o número do cartão">
+                        <label for="card-name">Nome no Cartão:</label>
+                        <input type="text" id="card-name" name="card-name" placeholder="Digite o nome no cartão">
+                        <label for="card-expiry">Data de Validade:</label>
+                        <input type="text" id="card-expiry" name="card-expiry" placeholder="MM/AA">
+                        <label for="card-cvv">CVV:</label>
+                        <input type="text" id="card-cvv" name="card-cvv" placeholder="CVV">
+                    </div>
+                    <div id="pix-details" style="display: none;">
+                        <label for="pix-key">Chave PIX:</label>
+                        <input type="text" id="pix-key" name="pix-key" placeholder="Digite sua chave PIX">
+                    </div>
+                    <button type="button" onclick="updateSummary()">Salvar</button>
+                </form>
+            </div>
+            <div class="section delivery-method">
+                <h2>Forma de Entrega</h2>
+                <button onclick="selectDeliveryMethod('agendada')">Agendada</button>
+                <button onclick="selectDeliveryMethod('rapida')">Entrega Rápida</button>
+                <button onclick="selectDeliveryMethod('retirada')">Retirar na Loja</button>
+                <form id="deliveryForm" style="display: none;">
+                    <div id="address-details" style="display: none;">
+                        <label for="delivery-address">Endereço de Entrega:</label>
+                        <input type="text" id="delivery-address" name="delivery-address" placeholder="Digite o endereço completo">
+                        <label for="delivery-date">Data de Entrega:</label>
+                        <input type="date" id="delivery-date" name="delivery-date">
+                    </div>
+                    <button type="button" onclick="updateDeliverySummary()">Salvar</button>
+                </form>
+            </div>
+        </div>
+        <div class="section summary">
+            <h2>Resumo do Pedido</h2>
+            <div class="subtotal">Subtotal: R$ 100,50</div>
+            <div class="frete">Frete: R$ 10,00</div>
+            <div class="final">Total: R$ 110,50</div>
+            <div class="finalize-button-container" style="text-align: center; margin-top: 20px;">
+                <button>Finalizar Pedido</button>
+            </div>
+        </div>
+    </div>
+    <footer>
+        &copy; 2025 Swift. Todos os direitos reservados.
+    </footer>
+    <script>
+        function addToCart(name, price, image) {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const existingItem = cartItems.find(item => item.name === name);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cartItems.push({ name, price, image, quantity: 1 });
+            }
+
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+            // Refresh the 'Meus Produtos' list
+            refreshProductsList();
+        }
+
+        function refreshProductsList() {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const productsSelectedContainer = document.querySelector('.products-selected');
+
+            // Clear existing content
+            productsSelectedContainer.innerHTML = '<h2>Meus Produtos</h2>';
+
+            let subtotal = 0; // Initialize subtotal
+
+            // Dynamically add items from localStorage
+            cartItems.forEach(item => {
+                const productElement = document.createElement('div');
+                productElement.classList.add('product');
+                productElement.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <span>${item.name}</span>
+                    <span>Quantidade: ${item.quantity}</span>
+                    <span>R$ ${(item.price * item.quantity).toFixed(2)}</span>
+                `;
+                productsSelectedContainer.appendChild(productElement);
+
+                subtotal += item.price * item.quantity; // Calculate subtotal
+            });
+
+            // Update the subtotal in the summary
+            const summaryContainer = document.querySelector('.summary');
+            const subtotalElement = summaryContainer.querySelector('.subtotal');
+            if (subtotalElement) {
+                subtotalElement.innerText = `Subtotal: R$ ${subtotal.toFixed(2)}`;
+            }
+
+            // Update the total (if needed)
+            const freteElement = summaryContainer.querySelector('.frete');
+            const frete = freteElement ? parseFloat(freteElement.innerText.replace('Frete: R$ ', '').replace(',', '.')) : 0;
+            const totalElement = summaryContainer.querySelector('.final');
+            if (totalElement) {
+                totalElement.innerText = `Total: R$ ${(subtotal + frete).toFixed(2)}`;
+            }
+        }
+
+        // Initial load of 'Meus Produtos'
+        document.addEventListener('DOMContentLoaded', refreshProductsList);
+
+        function selectPaymentMethod(method) {
+            const paymentForm = document.getElementById('paymentForm');
+            const cartaoDetails = document.getElementById('cartao-details');
+            const pixDetails = document.getElementById('pix-details');
+
+            paymentForm.style.display = 'flex';
+            paymentForm.style.flexDirection = 'column'; // Ensure vertical alignment
+            paymentForm.style.gap = '15px'; // Add spacing between elements
+
+            cartaoDetails.style.display = method === 'cartao' ? 'block' : 'none';
+            pixDetails.style.display = method === 'pix' ? 'block' : 'none';
+
+            // Update the selected payment method dynamically
+            const paymentButtons = document.querySelectorAll('.payment-method button');
+            paymentButtons.forEach(button => button.style.backgroundColor = ''); // Reset styles
+
+            const selectedButton = Array.from(paymentButtons).find(button => button.onclick.toString().includes(method));
+            if (selectedButton) {
+                selectedButton.style.backgroundColor = '#f15a24'; // Highlight selected button
+            } else {
+            }
+
+            document.querySelector('.summary').dataset.selectedPaymentMethod = method;
+        }
+
+        function updateSummary() {
+            const paymentMethod = document.querySelector('.payment-method button[style*="background-color"]')?.innerText || 'Não selecionado';
+            const cardNumber = document.getElementById('card-number')?.value || '';
+            const cardName = document.getElementById('card-name')?.value || '';
+            const pixKey = document.getElementById('pix-key')?.value || '';
+
+            const summaryContainer = document.querySelector('.summary');
+            let paymentInfo = document.querySelector('.summary .payment-info');
+
+            if (!paymentInfo) {
+                paymentInfo = document.createElement('div');
+                paymentInfo.classList.add('payment-info');
+                summaryContainer.appendChild(paymentInfo);
+            }
+
+            paymentInfo.innerHTML = `
+                <h3>Dados de Pagamento</h3>
+                <p>Forma de Pagamento: ${paymentMethod}</p>
+                ${paymentMethod === 'Cartão de Crédito' ? `
+                    <p>Número do Cartão: ${cardNumber}</p>
+                    <p>Nome no Cartão: ${cardName}</p>
+                ` : ''}
+                ${paymentMethod === 'PIX' ? `
+                    <p>Chave PIX: ${pixKey}</p>
+                ` : ''}
+            `;
+        }
+
+        function selectDeliveryMethod(method) {
+            const deliveryForm = document.getElementById('deliveryForm');
+            const addressDetails = document.getElementById('address-details');
+
+            deliveryForm.style.display = 'block';
+            addressDetails.style.display = method === 'agendada' || method === 'rapida' ? 'block' : 'none';
+
+            // Highlight selected delivery method
+            const deliveryButtons = document.querySelectorAll('.delivery-method button');
+            deliveryButtons.forEach(button => button.style.backgroundColor = ''); // Reset styles
+
+            const selectedButton = Array.from(deliveryButtons).find(button => button.onclick.toString().includes(method));
+            if (selectedButton) {
+                selectedButton.style.backgroundColor = '#f15a24'; // Highlight selected button
+                selectedButton.style.color = '#fff';
+            }
+
+            document.querySelector('.summary').dataset.selectedDeliveryMethod = method;
+        }
+
+        function updateDeliverySummary() {
+            const deliveryMethod = document.querySelector('.delivery-method button[style*="background-color"]')?.innerText || 'Não selecionado';
+            const deliveryAddress = document.getElementById('delivery-address')?.value || '';
+            const deliveryDate = document.getElementById('delivery-date')?.value || '';
+
+            const summaryContainer = document.querySelector('.summary');
+            let deliveryInfo = summaryContainer.querySelector('.delivery-info');
+
+            if (!deliveryInfo) {
+                deliveryInfo = document.createElement('div');
+                deliveryInfo.classList.add('delivery-info');
+                summaryContainer.appendChild(deliveryInfo);
+            }
+
+            deliveryInfo.innerHTML = `
+                <h3>Dados de Entrega</h3>
+                <p>Forma de Entrega: ${deliveryMethod}</p>
+                ${deliveryMethod === 'Agendada' || deliveryMethod === 'Entrega Rápida' ? `
+                    <p>Endereço: ${deliveryAddress}</p>
+                    <p>Data: ${deliveryDate}</p>
+                ` : ''}
+            `;
+
+            // Atualizar frete
+            let shippingCost = 10.00; // Default shipping cost
+            if (deliveryMethod === 'Retirar na Loja') {
+                shippingCost = 0.00;
+            }
+
+            const freteElement = summaryContainer.querySelector('.frete');
+            if (freteElement) {
+                freteElement.innerText = `Frete: R$ ${shippingCost.toFixed(2)}`;
+            }
+
+            // Atualizar total
+            const subtotalElement = summaryContainer.querySelector('.subtotal');
+            const subtotal = subtotalElement ? parseFloat(subtotalElement.innerText.replace('Subtotal: R$ ', '').replace(',', '.')) : 0;
+            const totalElement = summaryContainer.querySelector('.final');
+            if (totalElement) {
+                totalElement.innerText = `Total: R$ ${(subtotal + shippingCost).toFixed(2)}`; // Include shipping cost in total
+            }
+        }
+    </script>
+</body>
+
+</html>

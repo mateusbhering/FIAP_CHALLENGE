@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+<title>Confirme sua identidade</title>
+<style>
+    /* Reset básico */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Arial', sans-serif;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f7f7f7;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 400px;
+        padding: 40px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    /* Logo */
+    .logo {
+        display: block;
+        margin: 0 auto 20px auto;
+        width: 300px;
+    }
+
+    h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+        font-weight: normal;
+        color: #333;
+    }
+
+    .form-group {
+        text-align: left;
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+    }
+
+    input[type="email"] {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+
+    input[type="email"]:focus {
+        border-color: #ff6200;
+        outline: none;
+    }
+
+    .continue-btn {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: none;
+        background-color: #ccc;
+        color: #fff;
+        font-size: 16px;
+        cursor: not-allowed;
+        margin-bottom: 15px;
+    }
+
+    .social-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        margin-bottom: 10px;
+        font-size: 16px;
+        text-decoration: none;
+        color: #000;
+        background-color: #fff;
+    }
+
+    .social-btn img {
+        width: 20px;
+        margin-right: 10px;
+    }
+
+    .note {
+        margin-top: 15px;
+        font-size: 12px;
+        color: #888;
+    }
+
+    .breadcrumb {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 20px;
+        text-align: left;
+    }
+
+    .breadcrumb span {
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <img src="../assets/logo_swift.png" alt="Swift Logo" class="logo">
+
+    <h2>Confirme sua identidade</h2>
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Informe e-mail de cadastro ou cadastre-se">
+    </div>
+
+    <button id="continueBtn" class="continue-btn" disabled>Continuar</button>
+
+    <a id="googleBtn" href="../paginas/produtos.html" class="social-btn">
+        <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google Logo"> Sign in with Google
+    </a>
+
+    <a id="appleBtn" href="../paginas/produtos.html" class="social-btn">
+        <i class="devicon-apple-original colored" style="font-size:20px; margin-right:10px;"></i>
+        Sign in with Apple
+    </a>
+
+    <div class="note">
+        Estamos mudando nossa experiência de compra, para você, em primeira mão!
+    </div>
+</div>
+
+<script>
+    // Enable continue button when a non-empty email is provided
+    (function(){
+        const email = document.getElementById('email');
+        const continueBtn = document.getElementById('continueBtn');
+        const produtosPath = 'produtos.html'; // relative when served from paginas/
+
+        function validEmail(value){
+            return value && value.indexOf('@') > 0; // simple check
+        }
+
+        email.addEventListener('input', function(){
+            if(validEmail(email.value.trim())){
+                continueBtn.disabled = false;
+                continueBtn.style.backgroundColor = '#ff6200';
+                continueBtn.style.cursor = 'pointer';
+            } else {
+                continueBtn.disabled = true;
+                continueBtn.style.backgroundColor = '#ccc';
+                continueBtn.style.cursor = 'not-allowed';
+            }
+        });
+
+        // Navigate to produtos on click
+        continueBtn.addEventListener('click', function(){
+            if(!continueBtn.disabled){
+                // Use location.assign to navigate
+                window.location.href = produtosPath;
+            }
+        });
+
+        // Social links already have href fallback; intercept to ensure proper relative path
+        document.getElementById('googleBtn').addEventListener('click', function(e){
+            // Allow default navigation to produtos.html (href set)
+        });
+
+        document.getElementById('appleBtn').addEventListener('click', function(e){
+            // Allow default navigation to produtos.html (href set)
+        });
+    })();
+</script>
+</body>
+</html>
