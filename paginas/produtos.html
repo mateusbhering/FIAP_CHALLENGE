@@ -76,16 +76,213 @@ header input[type="text"] { flex:0 0 420px; padding:5px 10px; border-radius:5px;
 .product-card .quantity button { padding:2px 8px; border:1px solid #ccc; background:#f5f5f5; cursor:pointer; border-radius:4px; }
 .product-card .add-btn { background:#f15a24; color:#fff; border:none; padding:8px 12px; border-radius:5px; cursor:pointer; width:100%; }
 
+/* Add pressed effect for the add button */
+.add-btn:active {
+        transform: scale(0.95);
+        background-color: #d94e1f; /* Slightly darker shade */
+    }
+
 /* Badge */
 .badge { position:absolute; background:#f15a24; color:#fff; padding:4px 8px; font-size:12px; border-radius:8px; top:10px; left:10px; font-weight:bold; z-index:5; }
 .badge-container { position:relative; }
+
+/* Modal styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    background-color: #fff;
+    padding: 30px 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 300px;
+    position: relative;
+}
+
+.modal h1 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #1a1a1a;
+}
+
+.modal p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.modal button {
+    background-color: #7a7a7a;
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.modal button:hover {
+    background-color: #5e5e5e;
+}
+
+.modal .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Cart styles */
+.cart-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    transition: width 0.3s ease;
+    z-index: 1000;
+}
+
+.cart {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 350px; /* Increased by 50px */
+    height: 100%;
+    background-color: #ff6200;
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+.cart-header {
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.cart-header::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: #fff;
+    margin-top: 10px;
+}
+
+.cart-items {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 20px; /* Increased spacing */
+}
+
+.cart-item {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+.cart-item img {
+        width: 50px;
+        height: 50px;
+        border-radius: 4px;
+        object-fit: cover;
+    }
+
+.cart-item .remove-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #ff0000;
+        font-size: 18px;
+    }
+
+    .cart-item .remove-btn:hover {
+        color: #cc0000;
+    }
+
+.cart-footer {
+    margin-top: auto;
+}
+
+.cart-total {
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.checkout-btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #ff6200;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.checkout-btn:hover {
+    background-color: #f2f2f2;
+}
+
+/* Footer styles */
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 15px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    margin-top: 20px;
+}
+
+footer a {
+    color: #f15a24;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
 </style>
 </head>
 <body>
 
 <header>
     <div class="top-bar">
-        <div class="location-text">São Paulo - Capital - CEP 09751-250 | Preços válidos somente para essa Região.</div>
+        <div class="location-text">
+            <p>São Paulo - Capital - CEP 09751-250 | Preços válidos somente para essa Região.</p>
+        </div>
         <button class="alter-btn">ALTERAR</button>
     </div>
     <div class="search-cart">
@@ -102,7 +299,7 @@ header input[type="text"] { flex:0 0 420px; padding:5px 10px; border-radius:5px;
 
         <div class="cart-wrap" style="margin-left:12px;">
             <div class="cart-label">CARRINHO</div>
-            <div class="cart-icon" role="button" aria-label="Ver carrinho" tabindex="0">
+            <div class="cart-icon" role="button" aria-label="Ver carrinho" tabindex="0" id="cartIcon">
                 <img src="../assets/carrinho.png" alt="Carrinho">
                 <span class="cart-count" aria-live="polite">0</span>
             </div>
@@ -115,7 +312,7 @@ header input[type="text"] { flex:0 0 420px; padding:5px 10px; border-radius:5px;
     <div class="cat-item"><img src="../assets/categorias/pronto_para_comer.png" alt="Prontos para comer"><span>PRONTOS PARA COMER</span></div>
     <div class="cat-item"><img src="../assets/categorias/carnes.png" alt="Carnes / Bovinos"><span>BOVINOS</span></div>
     <div class="cat-item"><img src="../assets/categorias/aves.png" alt="Aves"><span>AVES</span></div>
-    <div class="cat-item"><img src="../assets/categorias/pescado.jpg" alt="Pescados"><span>PESCADOS</span></div>
+    <div class="cat-item"><img src="../assets/categorias/pescado.png" alt="Pescados"><span>PESCADOS</span></div>
     <div class="cat-item"><img src="../assets/categorias/suino.png" alt="Suínos"><span>SUÍNOS</span></div>
     <div class="cat-item"><img src="../assets/categorias/linguiça.png" alt="Linguiças"><span>LINGUIÇAS</span></div>
     <div class="cat-item"><img src="../assets/categorias/churrasco.png" alt="Churrasco"><span>CHURRASCO</span></div>
@@ -324,6 +521,35 @@ header input[type="text"] { flex:0 0 420px; padding:5px 10px; border-radius:5px;
     </section>
 </div>
 
+<!-- Modal structure -->
+<div id="promoModal" class="modal-overlay">
+    <div class="modal">
+        <button class="close-btn" id="closeModal">&times;</button>
+        <h1>LEVE 3<br>PAGUE 2</h1>
+        <p>Leve três produtos pelo preço de dois</p>
+        <button id="takeOffer">APROVEITE</button>
+    </div>
+</div>
+
+<!-- Cart structure -->
+<div id="cartOverlay" class="cart-overlay">
+    <div class="cart">
+        <div class="cart-header">Seu Carrinho</div>
+        <div class="cart-items" id="cartItems">
+            <!-- Items will be dynamically added here -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total" id="cartTotal">Total: R$ 0,00</div>
+            <button class="checkout-btn" id="checkoutBtn" onclick="window.location.href='pagamento.html'">Finalizar Compra</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add footer from entrega.html -->
+<footer>
+    &copy; 2025 Swift. Todos os direitos reservados.
+</footer>
+
 </body>
 <script>
 // Increment / decrement das quantidades (mínimo 1)
@@ -388,6 +614,117 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 });
             }
+
+            const modal = document.getElementById('promoModal');
+            const closeModal = document.getElementById('closeModal');
+            const takeOffer = document.getElementById('takeOffer');
+
+            // Check if navigated from login page
+            if (document.referrer.includes('login.html')) {
+                modal.style.display = 'flex';
+            }
+
+            // Close modal on close button click
+            closeModal.addEventListener('click', function () {
+                modal.style.display = 'none';
+            });
+
+            // Close modal on "Aproveite" button click
+            takeOffer.addEventListener('click', function () {
+                modal.style.display = 'none';
+            });
+
+            // Cart functionality
+            const cartOverlay = document.getElementById('cartOverlay');
+            const cart = cartOverlay.querySelector('.cart');
+            const cartIcon = document.getElementById('cartIcon');
+            const cartItems = document.getElementById('cartItems');
+            const cartTotalEl = document.getElementById('cartTotal');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+
+            let items = [];
+
+            function updateCart() {
+                cartItems.innerHTML = '';
+                let total = 0;
+
+                items.forEach((item, index) => {
+                    const itemElement = document.createElement('div');
+                    itemElement.classList.add('cart-item');
+                    itemElement.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}">
+                        <span>${item.name} (x${item.quantity})</span>
+                        <span>R$ ${(item.price * item.quantity).toFixed(2)}</span>
+                        <button class="remove-btn" data-index="${index}">&times;</button>
+                    `;
+                    cartItems.appendChild(itemElement);
+                    total += item.price * item.quantity;
+                });
+
+                cartTotalEl.textContent = `Total: R$ ${total.toFixed(2)}`;
+
+                // Add event listeners to remove buttons
+                const removeButtons = document.querySelectorAll('.remove-btn');
+                removeButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        const index = parseInt(button.getAttribute('data-index'), 10);
+                        items.splice(index, 1);
+                        updateCart();
+                    });
+                });
+
+                // Export items to localStorage
+                localStorage.setItem('cartItems', JSON.stringify(items));
+            }
+
+            document.querySelectorAll('.add-btn').forEach((button) => {
+                button.addEventListener('click', function () {
+                    const productCard = button.closest('.product-card');
+                    const productName = productCard.querySelector('h4').textContent;
+                    const productPrice = parseFloat(productCard.querySelector('.price').textContent.replace('R$', '').replace(',', '.'));
+                    const productImage = productCard.querySelector('img').src;
+                    const quantityElement = productCard.querySelector('.qty-value');
+                    const quantityToAdd = parseInt(quantityElement.textContent, 10);
+
+                    const existingItem = items.find(item => item.name === productName);
+                    if (existingItem) {
+                        existingItem.quantity += quantityToAdd;
+                    } else {
+                        items.push({ name: productName, quantity: quantityToAdd, price: productPrice, image: productImage });
+                    }
+
+                    updateCart();
+                });
+            });
+
+            cartIcon.addEventListener('click', function () {
+                cartOverlay.style.width = '100%';
+                cart.style.transform = 'translateX(0)';
+                updateCart();
+            });
+
+            cartOverlay.addEventListener('click', function (e) {
+                if (e.target === cartOverlay) {
+                    cartOverlay.style.width = '0';
+                    cart.style.transform = 'translateX(100%)';
+                }
+            });
+
+            checkoutBtn.addEventListener('click', function () {
+                alert('Compra finalizada!');
+                cartOverlay.style.width = '0';
+                cart.style.transform = 'translateX(100%)';
+            });
+
+            // Load items from localStorage on page load
+            const storedItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            //sum quantities of all items and chenge cart count
+            let storedTotal = 0;
+            storedItems.forEach(item => { storedTotal += item.quantity; });
+            cartTotal += storedTotal;
+            if (cartCountEl) { cartCountEl.textContent = String(cartTotal); }
+            items.push(...storedItems);
+            updateCart();
 });
 </script>
 </html>
